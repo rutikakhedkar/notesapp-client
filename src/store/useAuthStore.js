@@ -2,9 +2,19 @@
 
 import { create } from "zustand";
 
+
+// 🔍 Check if token expired (helper function)
+export function isTokenExpired(token) {
+  if (!token) return true;
+
+  const payload = JSON.parse(atob(token.split(".")[1])); // decode JWT
+  const expiryTime = payload.exp * 1000;
+  return Date.now() > expiryTime; // true = expired
+}
+
 const useAuthStore = create((set) => ({
-  user: null,
-  token: null,
+  user: JSON.parse(localStorage.getItem("user")) || null,  // Restore user
+  token: localStorage.getItem("token") || null, 
 
   // 🔹 LOGIN FUNCTION
   loginFunction: async (user) => {
@@ -27,6 +37,9 @@ const useAuthStore = create((set) => ({
 
       // 🔥 Save user & token in Zustand
       set({ user: data.data, token: data.token });
+      localStorage.setItem("user", JSON.stringify(data.data));
+      localStorage.setItem("token", data.token);
+
     } catch (err) {
       console.log("Login Error:", err);
     }
@@ -53,10 +66,28 @@ const useAuthStore = create((set) => ({
       }
 
       set({ user: data.data, token: data.token }); // ✔ save user & token
+      localStorage.setItem("user", JSON.stringify(data.data));
+      localStorage.setItem("token", data.token);
     } catch (err) {
       console.log("Register Error:", err);
     }
   },
+
+
+  //logout function
+   logout: () => {
+    set({ user: null, token: null });
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+  },
+
+
 }));
+
+const token = localStorage.getItem("token");
+if (token && isTokenExpired(token)) {
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+}
 
 export default useAuthStore;

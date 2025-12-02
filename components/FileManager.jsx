@@ -1,23 +1,11 @@
 import { useState } from "react";
 import { FaFolder, FaEllipsisV, FaFilePdf, FaFileWord, FaFileCsv } from "react-icons/fa";
-import { AiOutlinePlus } from "react-icons/ai";
+import FileUpload from "./FileUpload";
 
 export default function FileManager() {
-  const [recentFiles, setRecentFiles] = useState([
-    { name: "company.pdf", type: "pdf", date: "2024-01-21" },
-    { name: "Mockups", type: "folder", date: "2024-01-21" },
-    { name: "Employee Plan.csv", type: "csv", date: "2024-01-21" },
-  ]);
-
- 
-
-  const [allFiles, setAllFiles] = useState([
-    { name: "Milestone", size: "32 KB", type: "Folder", lastEdit: "March 1, 2024" },
-    { name: "Public Documents", size: "24 MB", type: "Folder", lastEdit: "March 1, 2024" },
-    { name: "Architectures.docx", size: "50 MB", type: "DOC", lastEdit: "March 1, 2024" },
-    { name: "Timelines.pdf", size: "15 KB", type: "PDF", lastEdit: "March 1, 2024" },
-    { name: "Project Videos", size: "24 MB", type: "Folder", lastEdit: "March 1, 2024" },
-  ]);
+  const [recentFiles, setRecentFiles] = useState([]);
+  const [allFiles, setAllFiles] = useState([]);
+  
 
   return (
     <div className="p-5 w-full">
@@ -25,10 +13,20 @@ export default function FileManager() {
       {/* HEADER */}
       <div className="flex justify-between items-center mb-5">
         <h2 className="font-bold text-xl">Total Files ({allFiles.length})</h2>
-        <button className="flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-md shadow">
+        {/* <button className="flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-md shadow">
           <AiOutlinePlus size={18} />
           Upload File
-        </button>
+        </button> */}
+        <FileUpload onUpload={(file) => {
+          const newFile = {
+            name: file.name,
+            size: `${(file.size / 1024).toFixed(2)} KB`,
+            type: file.name.split('.').pop().toUpperCase(),
+            lastEdit: new Date().toLocaleDateString(),
+          };
+          setAllFiles([newFile, ...allFiles]);
+          setRecentFiles([{ name: file.name, type: newFile.type.toLowerCase(), date: new Date().toISOString().split('T')[0] }, ...recentFiles]);
+        }} />
       </div>
 
       {/* RECENTLY ACCESSED */}

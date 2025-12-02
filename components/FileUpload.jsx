@@ -12,7 +12,6 @@ export default function FileUpload({ onUpload }) {
         className="hidden"
         onChange={handleUpload}
       />
-
       <button
         onClick={() => document.getElementById("filePicker").click()}
         className="flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-md shadow"

@@ -18,7 +18,7 @@ function Homepage() {
 
  useEffect(() => {
     if (token && isTokenExpired(token)) {
-      logout(); // auto logout if expired
+      logout(); 
       console.log("Token expired. Logged out.");
     }
   }, [token]);
